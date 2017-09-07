@@ -2,10 +2,8 @@
     "compilerOptions": {
         "module": "commonjs",
         "target": "es3",
-        "outDir": "dist",
-        // "lib": [
-        //     "es6"
-        // ],
-        "sourceMap": true
+        "outDir": "build",
+        "rootDir": "src",
+        "sourceMap": false
     }
 }
