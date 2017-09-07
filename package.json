@@ -2,9 +2,10 @@
   "name": "cash-register",
   "version": "1.0.0",
   "description": "Simple implementation of a cash register.",
-  "main": "index.js",
+  "main": "build/main.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node build/main.js"
   },
   "author": "Dusan Radovanovic",
   "license": "MIT"
