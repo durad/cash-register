@@ -4,42 +4,101 @@ import { Discount } from './discount';
 import { Helper } from './helper';
 import { Product } from './product';
 
+/**
+ * Represents one item on the final receipt with specific product and quantity.
+ */
 export class ReceiptItem {
+    /**
+     * Price after discount.
+     */
     finalPrice: number = 0;
-    lines: string[] = [];
+
+    /**
+     * Discount object applied to the current item.
+     */
     discount: Discount = null;
+
+    /**
+     * Text added to the receipt in case the discount is applied.
+     */
     discountLine: string = null;
+
+    /**
+     * Total saving on this line in case a discount has been applied.
+     */
     discountSaving: number = null;
 
+    /**
+     * Creates a new object of the ReceiptItem class.
+     * @param product Product that is being purchesed.
+     * @param quantity Quantity of the product items or product weight.
+     */
     constructor(
         public product: Product,
         public quantity: number
     ) {
     }
 
+    /**
+     * Updates the quantity of a given product.
+     * @param addedQuantity Quantity of the product to be added.
+     */
     addQuantity(addedQuantity: number): void {
         this.quantity += addedQuantity;
     }
 
+    /**
+     * Calculates the price of the product without any discount applied.
+     */
     regularPrice(): number {
         return this.product.price * this.quantity;
     }
 }
 
+/**
+ * Represents receipt of a single purchase.
+ */
 export class Receipt {
+    /**
+     * Price of all items after all discounts have been applied but before a coupon has been applied.
+     */
     subTotal: number = 0;
+
+    /**
+     * Price of all items after both discounts and coupon have been applied.
+     */
     total: number = 0;
-    coupon: Coupon;
+
+    /**
+     * Represents the coupon applied to the current purchase.
+     */
+    coupon: Coupon = null;
+
+    /**
+     * Text added to the receipt in case the coupon has been applied.
+     */
     couponLine: string = null;
+
+    /**
+     * Total saving on the receipt in case the coupon has been applied.
+     */
     couponSaving: number = null;
 
+    /**
+     * Creates the instance of the Receipt class.
+     * @param receiptItems List of receipt items.
+     * @param discounts List of currently active discounts.
+     */
     constructor(
         public receiptItems: ReceiptItem[],
         public discounts: Discount[]
     ) {
     }
 
-    processItems(): void {
+    /**
+     * Calculates subTotal by applying the best discounts to each and every receipt item.
+     */
+    calculateSubTotal(): void {
         for (let item of this.receiptItems) {
             item.finalPrice = item.regularPrice();
 
@@ -67,6 +126,9 @@ export class Receipt {
         }
     }
 
+    /**
+     * Generates a textual representation of the receipt that can be printed on the machine.
+     */
     toString(): string {
         let qtyWidth = 10;
         let productWidth = 30;
@@ -74,6 +136,7 @@ export class Receipt {
 
         let receiptLines = [];
 
+        // header
         receiptLines.push([
             Helper.padRight('Qty', qtyWidth),
             Helper.padRight('Product', productWidth),
@@ -86,6 +149,7 @@ export class Receipt {
             Helper.repeat('=', priceWidth)
         ].join(' '));
 
+        // items
         for (let item of this.receiptItems) {
             receiptLines.push([
                 Helper.padRight(item.product.formatQuantity(item.quantity), qtyWidth),
@@ -102,6 +166,7 @@ export class Receipt {
             }
         }
 
+        // footer
         receiptLines.push([
             Helper.repeat(' ', qtyWidth),
             Helper.repeat(' ', productWidth),
@@ -137,6 +202,9 @@ export class Receipt {
         return receiptLines.join('\n');
     }
 
+    /**
+     * Prints a receipt the console.
+     */
     print(): void {
         console.log(this.toString());
         console.log();
